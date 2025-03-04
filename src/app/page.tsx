@@ -11,7 +11,7 @@ export default function Home() {
 
     return (
         <div className="text-white px-4 py-3 space-y-12">
-            <button className="bg-white text-black p-3 rounded-full cursor-pointer bottom-0 right-10 fixed"><Download /></button>
+            <button className="bg-white border border-black text-black p-3 rounded-full cursor-pointer bottom-0 right-10 fixed"><Download /></button>
             <div className="flex justify-between items-center">
                 <div className="font-bold">Cliente</div>
                 <Image src="/logo.png" width={50} height={50} alt="logo" />
@@ -24,6 +24,7 @@ export default function Home() {
                         <button className="cursor-pointer bg-neutral-500 text-white p-2 rounded-full" onClick={(e) => {
                             e.stopPropagation();
                             setPreview(null);
+                            if (fileInputRef.current) fileInputRef.current.value = '';
                         }}><X /></button>
                         <button className="bg-white text-black py-2 px-6 rounded-full cursor-pointer">Adicionar +</button>
                     </div>
@@ -40,10 +41,13 @@ export default function Home() {
                                 if (file) setPreview(URL.createObjectURL(file));
                             }}
                         />
-                        <button className="absolute right-5 top-5 cursor-pointer bg-red-500 text-white p-3 rounded-full" onClick={(e) => {
-                            e.stopPropagation();
-                            setPreview(null);
-                        }}><Trash2 /></button>
+                        {preview && (
+                            <button className="absolute right-5 top-5 cursor-pointer bg-red-500 text-white p-3 rounded-full" onClick={(e) => {
+                                e.stopPropagation();
+                                setPreview(null);
+                                if (fileInputRef.current) fileInputRef.current.value = '';
+                            }}><Trash2 /></button>
+                        )}
                         {preview ? (
                             <img src={preview} alt="Preview" className="w-full h-full object-cover" />
                         ) : (
@@ -59,7 +63,8 @@ export default function Home() {
                     <div className='flex items-center gap-2'>
                         <button className="cursor-pointer bg-neutral-500 text-white p-2 rounded-full" onClick={(e) => {
                             e.stopPropagation();
-                            setPreview(null);
+                            setDesktopPreview(null);
+                            if (desktopInputRef.current) desktopInputRef.current.value = '';
                         }}><X /></button>
                         <button className="bg-white text-black py-2 px-6 rounded-full cursor-pointer">Adicionar +</button>
                     </div>
@@ -76,10 +81,13 @@ export default function Home() {
                                 if (file) setDesktopPreview(URL.createObjectURL(file));
                             }}
                         />
-                        <button className="absolute right-5 top-5 cursor-pointer bg-red-500 text-white p-3 rounded-full" onClick={(e) => {
-                            e.stopPropagation();
-                            setDesktopPreview(null);
-                        }}><Trash2 /></button>
+                        {desktopPreview && (
+                            <button className="absolute right-5 top-5 cursor-pointer bg-red-500 text-white p-3 rounded-full" onClick={(e) => {
+                                e.stopPropagation();
+                                setDesktopPreview(null);
+                                if (desktopInputRef.current) desktopInputRef.current.value = '';
+                            }}><Trash2 /></button>
+                        )}
                         {desktopPreview ? (
                             <img src={desktopPreview} alt="Desktop Preview" className="w-full h-full object-cover" />
                         ) : (
