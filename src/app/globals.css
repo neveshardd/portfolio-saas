@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+.aspect-vertical {
+  aspect-ratio: 9/16;
+}
