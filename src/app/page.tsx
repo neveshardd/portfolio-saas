@@ -1,9 +1,11 @@
 "use client";
-import { useState, createRef } from 'react';
+import { useState, createRef, useRef } from 'react';
 import { CirclePlus, Download, Trash2, X } from "lucide-react";
 import Image from "next/image";
+import html2pdf from 'html2pdf.js';
 
 export default function Home() {
+    const contentRef = useRef<HTMLDivElement>(null);
     // Client information states
     const [clientName, setClientName] = useState<string>("Cliente");
     const [logoUrl, setLogoUrl] = useState<string>("/logo.png");
@@ -53,9 +55,59 @@ export default function Home() {
         }
     };
 
+    // Function to generate PDF without UI elements
+    const generatePDF = () => {
+        if (!contentRef.current) return;
+        
+        // Clone the content to avoid modifying the actual DOM
+        const element = contentRef.current.cloneNode(true) as HTMLElement;
+        
+        // Remove all buttons
+        const buttons = element.querySelectorAll('button');
+        buttons.forEach(button => button.remove());
+        
+        // Remove background text
+        const backgroundText = element.querySelector('div:has(+ div:has(button:contains("Change Background")))');
+        if (backgroundText) backgroundText.remove();
+        
+        // Remove mobile text
+        const mobileText = element.querySelector('div:has(+ div:has(button:contains("Adicionar +")))');
+        if (mobileText) mobileText.remove();
+        
+        // Remove desktop text
+        const desktopText = element.querySelector('div:has(+ div:has(button:contains("Adicionar +")))');
+        if (desktopText && desktopText !== mobileText) desktopText.remove();
+        
+        // Remove empty preview boxes (those with CirclePlus icon)
+        const emptyPreviews = element.querySelectorAll('div:has(> div > svg)');
+        emptyPreviews.forEach(preview => {
+            const parentElement = preview.parentElement;
+            if (parentElement && parentElement.classList.contains('aspect-[9/16]') || 
+                parentElement && parentElement.classList.contains('aspect-[16/9]')) {
+                parentElement.remove();
+            }
+        });
+        
+        // Generate PDF
+        const opt = {
+            margin: 10,
+            filename: `${clientName}-portfolio.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        
+        html2pdf().from(element).set(opt).save();
+    };
+    
     return (
-        <div className="text-white px-4 py-3 space-y-12" style={{ backgroundImage: `url(${backgroundUrl})` }}>
-            <button className="bg-white border border-black text-black p-3 rounded-full cursor-pointer bottom-0 right-10 fixed"><Download /></button>
+        <div ref={contentRef} className="text-white px-4 py-3 space-y-12" style={{ backgroundImage: `url(${backgroundUrl})`, backgroundSize: 'cover' }}>
+            <button 
+                className="bg-white border border-black text-black p-3 rounded-full cursor-pointer bottom-0 right-10 fixed"
+                onClick={() => generatePDF()}
+            >
+                <Download />
+            </button>
             <div className="flex justify-between items-center">
                 <input
                     type="text"

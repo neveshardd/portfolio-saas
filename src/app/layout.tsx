@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={`${inter.variable} antialiased bg-black bg-[url(/bggrid.png)]`} suppressHydrationWarning>
+      <body className={`${inter.variable} antialiased bg-black`} suppressHydrationWarning>
         {children}
       </body>
     </html>
